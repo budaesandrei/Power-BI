@@ -1,0 +1,16 @@
+// Using DAX
+// Replace the {} items with your values
+// Format "Year" as yyyy, "Month" as mmm-yyyy, "Date" as dd/mm/yyyy, "Hour" as hh:nn and "Minute" as hh:nn
+// In the Table pane, create a hierarchy with the path Year > Month > Date > Hour > Minute. Name it as you wish
+// Hide Timestamp from the original table and all columns except the hierarchy in the TI table
+// Go to Relationships and link the Timestamp column from the original table to the Timestamp in the TI table
+{Timestamp Column Name} TI = 
+var _col = SELECTCOLUMNS(Matchmaking, "Timestamp", {Table}[{Timestamp Column}])
+var _cal = DISTINCT(_col)
+return
+ADDCOLUMNS(_cal,
+    "Year", DATE(YEAR([Timestamp]),1,1),
+    "Month", DATE(YEAR([Timestamp]),MONTH([Timestamp]),1),
+    "Date", DATE(YEAR([Timestamp]),MONTH([Timestamp]),DAY([Timestamp])),
+    "Hour", DATE(YEAR([Timestamp]),MONTH([Timestamp]),DAY([Timestamp]))+TIME(HOUR([Timestamp]),0,0),
+    "Minute", DATE(YEAR([Timestamp]),MONTH([Timestamp]),DAY([Timestamp]))+TIME(HOUR([Timestamp]),MINUTE([Timestamp]),0))
